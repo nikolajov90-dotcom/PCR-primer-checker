@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import base64
+import urllib.parse
 
 from core import (
     analyze_primers,
@@ -170,13 +171,19 @@ if st.button("Analyze"):
 
         try:
 
-            genomes, amplicons = analyze_primers(
+            (   genomes,
+                amplicons,
+                forward_gc,
+                reverse_gc,
+                forward_tm,
+                reverse_tm
+            ) = analyze_primers(
                 uploaded_file,
                 forward,
                 reverse,
                 max_mismatches=max_mismatches,
                 max_length=max_amplicon_length
-            )       
+            )
 
         except Exception as e:
 
@@ -185,6 +192,27 @@ if st.button("Analyze"):
             )
 
             st.stop()
+
+
+
+    forward_blast_url = (
+        "https://blast.ncbi.nlm.nih.gov/Blast.cgi?"
+        + urllib.parse.urlencode({
+            "PROGRAM": "blastn",
+            "PAGE_TYPE": "BlastSearch",
+            "QUERY": forward
+        })
+    )
+    
+    reverse_blast_url = (
+        "https://blast.ncbi.nlm.nih.gov/Blast.cgi?"
+        + urllib.parse.urlencode({
+            "PROGRAM": "blastn",
+            "PAGE_TYPE": "BlastSearch",
+            "QUERY": reverse
+        })
+    )
+
 
 
     # ---------------------------
@@ -202,6 +230,46 @@ if st.button("Analyze"):
         f"Pronađeno {total_amplicons} "
         f"potencijalnih amplikona."
     )
+
+    st.subheader(
+    "Karakteristike prajmera"
+    )
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+    
+        st.metric(
+            "Forward GC (%)",
+            f"{forward_gc}"
+        )
+    
+        st.metric(
+            "Forward Tm (°C)",
+            f"{forward_tm}"
+        )
+
+        st.link_button(
+        "BLAST pretraga Forward prajmera",
+        forward_blast_url
+        )
+    
+    with col2:
+    
+        st.metric(
+            "Reverse GC (%)",
+            f"{reverse_gc}"
+        )
+    
+        st.metric(
+            "Reverse Tm (°C)",
+            f"{reverse_tm}"
+        )
+        st.link_button(
+        "BLAST pretraga Reverse prajmera",
+        reverse_blast_url
+        )
+
 
     # ---------------------------
     # Results table
@@ -334,6 +402,20 @@ if st.button("Analyze"):
 
                 st.code(
                     seq[:500]
+                )
+
+                blast_url = (
+                "https://blast.ncbi.nlm.nih.gov/Blast.cgi?"
+                + urllib.parse.urlencode({
+                "PROGRAM": "blastn",
+                "PAGE_TYPE": "BlastSearch",
+                "QUERY": seq
+                })
+                )
+
+                st.link_button(
+                "BLAST pretraga amplikona",
+                blast_url
                 )
 
                 st.divider()

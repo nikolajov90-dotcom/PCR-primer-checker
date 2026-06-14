@@ -1,6 +1,24 @@
 from Bio.Seq import Seq
 from Bio import SeqIO
 from io import TextIOWrapper
+from Bio.SeqUtils import gc_fraction
+from Bio.SeqUtils import MeltingTemp as mt
+
+
+def calculate_gc(primer):
+
+    return round(
+        gc_fraction(primer) * 100,
+        2
+    )
+
+
+def calculate_tm(primer):
+
+    return round(
+        mt.Tm_NN(primer),
+        2
+    )
 
 def load_genomes(fasta_file):
 
@@ -296,8 +314,28 @@ def analyze_primers(
         )
     )
 
+    forward_gc = calculate_gc(
+    forward
+    )
+
+    reverse_gc = calculate_gc(
+    reverse
+    )
+
+    forward_tm = calculate_tm(
+    forward
+    )
+
+    reverse_tm = calculate_tm(
+    reverse
+    )
+
 
     return (
     genomes,
     amplicons,
+    forward_gc,
+    reverse_gc,
+    forward_tm,
+    reverse_tm
 )
