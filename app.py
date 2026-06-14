@@ -107,13 +107,65 @@ reverse = st.text_input(
 )
 
 uploaded_file = st.file_uploader(
-    "Upload referentnog genoma (FASTA)",
+    "Upload referentnog genoma/transkriptoma",
     type=[
         "fasta",
         "fa",
         "fna"
     ]
 )
+
+reference_type = st.radio(
+    "Tip referentne sekvence",
+    [
+        "Genomska DNK",
+        "Transkriptom (cDNA/mRNA)"
+    ]
+)
+
+if reference_type == "Genomska DNK":
+
+    st.caption(
+        "Preporučeno za PCR, genotipizaciju i analizu genomskih regiona."
+    )
+
+else:
+
+    st.caption(
+        "Preporučeno za RT-PCR, qPCR i analizu ekspresije gena."
+    )
+
+with st.expander(
+    "Pomoć pri izboru referentne sekvence"
+):
+
+    st.markdown(
+        """
+        **Genomska DNK**
+
+        • Standardni PCR
+
+        • Genotipizacija
+
+        • Analiza promotora i introna
+
+        • FASTA fajlovi tipa *_genomic.fna.gz
+
+        ---
+
+        **Transkriptom (cDNA/mRNA)**
+
+        • RT-PCR
+
+        • qPCR
+
+        • Analiza ekspresije gena
+
+        • FASTA fajlovi tipa *_rna.fna.gz
+
+        RT-PCR prajmeri često daju mnogo veće produkte na genomu zbog prisustva introna.
+        """
+    )
 
 col1, col2 = st.columns(2)
 
