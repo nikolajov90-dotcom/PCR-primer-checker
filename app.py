@@ -349,7 +349,7 @@ if st.button("Analyze"):
 
             rows.append({
 
-                "Hromozom":
+                "Hromozom/transkript":
                     chromosome,
 
                 "Forward pozicija":
