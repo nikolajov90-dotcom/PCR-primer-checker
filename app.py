@@ -378,8 +378,46 @@ if st.button("Analyze"):
 
         df = pd.DataFrame(rows)
 
+        fasta_output = ""
+
+        for chromosome, products in amplicons.items():
+
+            for (
+                start,
+                end,
+                size,
+                strand,
+                f_mm,
+                r_mm,
+                total_mm
+            ) in products:
+        
+                seq = get_amplicon_sequence(
+                    genomes,
+                    chromosome,
+                    start,
+                    end,
+                    len(reverse)
+                )
+        
+                fasta_output += (
+                    f">{chromosome}_"
+                    f"{start}_{end}_"
+                    f"{size}bp_"
+                    f"{strand}\n"
+                )
+        
+                fasta_output += seq + "\n"
+        
         st.subheader(
             "Amplikoni"
+        )
+
+        st.download_button(
+            label="Preuzmi amplikone (FASTA)",
+            data=fasta_output,
+            file_name="amplicons.fasta",
+            mime="text/plain"
         )
 
         st.dataframe(
@@ -392,6 +430,8 @@ if st.button("Analyze"):
         st.warning(
             "Bez pronađenih amplikona."
         )
+
+
 
     # ---------------------------
     # Detailed view
