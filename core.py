@@ -100,9 +100,6 @@ def find_binding_sites(
             - primer_length
             + 1):
 
-        if genome[i] != primer[0]:
-            continue
-
         window = genome[
             i:i + primer_length
         ]
