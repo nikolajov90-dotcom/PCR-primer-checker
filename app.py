@@ -2,6 +2,8 @@ import streamlit as st
 import pandas as pd
 import base64
 import urllib.parse
+from ncbi import fetch_sequence
+
 
 from core import (
     analyze_primers,
@@ -115,6 +117,10 @@ uploaded_file = st.file_uploader(
     ]
 )
 
+accession = st.text_input(
+    "NCBI accession (opciono)"
+)
+
 reference_type = st.radio(
     "Tip referentne sekvence",
     [
@@ -217,6 +223,13 @@ if st.button("Analyze"):
         )
 
         st.stop()
+
+    if accession:
+
+        fasta = fetch_sequence(accession)
+
+        st.code(fasta[:500])	
+
 
     with st.spinner(
             "Pretraga mesta vezivanja \"prajmera\"..."):
