@@ -118,7 +118,7 @@ uploaded_file = st.file_uploader(
 )
 
 accession = st.text_input(
-    "NCBI accession (opciono)"
+    "NCBI accession referentne sekvence (opciono umesto upload-a)"
 )
 
 reference_type = st.radio(
@@ -223,7 +223,13 @@ if st.button("Analyze"):
     )
 
         st.stop()
+    if uploaded_file is not None and accession:
 
+        st.error(
+            "Izaberite samo jedan izvor referentne sekvence: ili upload FASTA fajla ili NCBI accession."
+        )
+
+        st.stop()
 
     reference_source = None
 
