@@ -216,20 +216,30 @@ if st.button("Analyze"):
 
         st.stop()
 
-    if uploaded_file is None:
+    if uploaded_file is None and not accession:
 
         st.error(
-            "Molim upload FASTA fajl-a."
-        )
+            "Molim uploadujte FASTA fajl ili unesite NCBI accession."
+    )
 
         st.stop()
 
-    if accession:
 
-        fasta = fetch_sequence(accession)
+    reference_source = None
 
-        st.code(fasta[:500])	
+    if uploaded_file is not None:
 
+        reference_source = uploaded_file
+
+    elif accession:
+
+        reference_source = fetch_sequence(accession)
+
+    if reference_source is None:
+
+        st.error("NCBI accession nije pronađen.")
+
+        st.stop()
 
     with st.spinner(
             "Pretraga mesta vezivanja \"prajmera\"..."):
@@ -243,7 +253,7 @@ if st.button("Analyze"):
                 forward_tm,
                 reverse_tm
             ) = analyze_primers(
-                uploaded_file,
+                reference_source,
                 forward,
                 reverse,
                 max_mismatches=max_mismatches,

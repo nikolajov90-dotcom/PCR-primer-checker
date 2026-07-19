@@ -3,7 +3,7 @@ from Bio import SeqIO
 from io import TextIOWrapper
 from Bio.SeqUtils import gc_fraction
 from Bio.SeqUtils import MeltingTemp as mt
-
+from io import StringIO
 
 def calculate_gc(primer):
 
@@ -20,22 +20,27 @@ def calculate_tm(primer):
         2
     )
 
-def load_genomes(fasta_file):
+def load_genomes(source):
 
     # Streamlit UploadedFile
-    if hasattr(fasta_file, "read"):
+    if hasattr(source, "read"):
 
-        fasta_file.seek(0)
+        source.seek(0)
 
         handle = TextIOWrapper(
-            fasta_file,
+            source,
             encoding="utf-8"
         )
 
-    # običan filepath
+    # FASTA tekst (npr. sa NCBI-ja)
+    elif isinstance(source, str) and source.startswith(">"):
+
+        handle = StringIO(source)
+
+    # Putanja do FASTA fajla
     else:
 
-        handle = fasta_file
+        handle = source
 
     return {
         record.id: str(record.seq).upper()
@@ -257,7 +262,7 @@ def get_amplicon_sequence(
 
 
 def analyze_primers(
-        fasta_file,
+        source,
         forward,
         reverse,
         max_mismatches=0,
@@ -269,7 +274,7 @@ def analyze_primers(
     reverse = reverse.upper()
 
     genomes = load_genomes(
-        fasta_file
+        source
     )
 
     reverse_rc = (
